@@ -1,4 +1,4 @@
-const express = require("express");
+const express = require('express');
 const app = express();
 app.use(express.json());
 
@@ -12,13 +12,13 @@ app.get("/songs", (req, res) => {
 app.post("/songs", (req, res) => {
     const song = { id: id++, name: req.body.name, artist: req.body.artist, completed: false };
     songs.push(song);
-    res.status(201).json({ number: songs.length });
+    res.status(201).json(song);
 });
 
 app.put("/songs/:id/toggle", (req, res) => {
-    const song = songs.find(song => song.id === parseInt(req.params.id));
+    const song = songs.find(song => song.id === parseInt(req.params.id, 10));
     if (song) {
-        song.completed = !song.completed;
+        song.completed = true; // 完了とする
         res.status(200).json(song);
     } else {
         res.status(404).send();
@@ -26,7 +26,7 @@ app.put("/songs/:id/toggle", (req, res) => {
 });
 
 app.delete("/songs/:id", (req, res) => {
-    songs = songs.filter(song => song.id !== parseInt(req.params.id));
+    songs = songs.filter(song => song.id !== parseInt(req.params.id, 10));
     res.status(204).send();
 });
 
