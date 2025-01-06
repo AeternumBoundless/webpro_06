@@ -2,56 +2,67 @@
 
 document.addEventListener("DOMContentLoaded", () => {
     const apiUrl = "http://localhost:3000"; // サーバのURL
-    const taskList = document.getElementById("task-list");
-    const newTaskInput = document.getElementById("new-task");
+    const songList = document.getElementById("song-list");
+    const songNameInput = document.getElementById("song-name");
+    const artistNameInput = document.getElementById("artist-name");
 
-    async function fetchTasks() {
-        const response = await fetch(`${apiUrl}/tasks`);
-        const tasks = await response.json();
-        renderTasks(tasks);
+    async function fetchSongs() {
+        const response = await fetch(`${apiUrl}/songs`);
+        const songs = await response.json();
+        renderSongs(songs);
     }
 
-    function renderTasks(tasks) {
-        taskList.innerHTML = "";
-        tasks.forEach(task => {
+    function renderSongs(songs) {
+        songList.innerHTML = "";
+        songs.forEach(song => {
             const li = document.createElement("li");
-            li.className = "task";
+            li.className = "song";
             li.innerHTML = `
-                <span>${task.name}</span>
-                <button data-id="${task.id}" class="delete-task">削除</button>
+                <span>${song.name} by ${song.artist} - ${song.completed ? "聞いた" : "未完了"}</span>
+                <button data-id="${song.id}" class="complete-song">${song.completed ? "未完了に戻す" : "完了"}</button>
+                <button data-id="${song.id}" class="delete-song">削除</button>
             `;
-            taskList.appendChild(li);
+            songList.appendChild(li);
         });
     }
 
-    async function addTask(name) {
-        await fetch(`${apiUrl}/tasks`, {
+    async function addSong(name, artist) {
+        await fetch(`${apiUrl}/songs`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name })
+            body: JSON.stringify({ name, artist, completed: false })
         });
-        fetchTasks();
+        fetchSongs();
     }
 
-    async function deleteTask(id) {
-        await fetch(`${apiUrl}/tasks/${id}`, { method: "DELETE" });
-        fetchTasks();
+    async function toggleCompletion(id) {
+        await fetch(`${apiUrl}/songs/${id}/toggle`, { method: "PUT" });
+        fetchSongs();
     }
 
-    document.getElementById("add-task").addEventListener("click", () => {
-        const taskName = newTaskInput.value.trim();
-        if (taskName) {
-            addTask(taskName);
-            newTaskInput.value = "";
+    async function deleteSong(id) {
+        await fetch(`${apiUrl}/songs/${id}`, { method: "DELETE" });
+        fetchSongs();
+    }
+
+    document.getElementById("add-song").addEventListener("click", () => {
+        const songName = songNameInput.value.trim();
+        const artistName = artistNameInput.value.trim();
+        if (songName && artistName) {
+            addSong(songName, artistName);
+            songNameInput.value = "";
+            artistNameInput.value = "";
         }
     });
 
-    taskList.addEventListener("click", (e) => {
-        if (e.target.classList.contains("delete-task")) {
-            const taskId = e.target.getAttribute("data-id");
-            deleteTask(taskId);
+    songList.addEventListener("click", (e) => {
+        const id = e.target.getAttribute("data-id");
+        if (e.target.classList.contains("complete-song")) {
+            toggleCompletion(id);
+        } else if (e.target.classList.contains("delete-song")) {
+            deleteSong(id);
         }
     });
 
-    fetchTasks();
+    fetchSongs();
 });

@@ -1,29 +1,46 @@
 body {
     font-family: Arial, sans-serif;
     text-align: center;
-    background-color: #f4f4f4;
+    background-color: #f9f9f9;
+}
+
+h1 {
+    color: #333;
 }
 
 #app {
     margin: 20px auto;
-    width: 300px;
+    width: 400px;
 }
 
 input, button {
     padding: 10px;
     font-size: 16px;
+    margin: 5px;
 }
 
-#task-list {
+button {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+#song-list {
     list-style-type: none;
     padding: 0;
 }
 
-.task {
+.song {
     background: #fff;
     margin: 10px 0;
     padding: 10px;
     border: 1px solid #ddd;
     display: flex;
     justify-content: space-between;
+    align-items: center;
 }
