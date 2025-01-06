@@ -1,23 +1,30 @@
+"use strict";
 const express = require("express");
 const app = express();
+
+let songs = []; // 曲リストを保存する配列
+let id = 1; // 一意のIDを管理
+
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use("/public", express.static(__dirname + "/public"));
 
-let songs = [];
-let id = 1;
-
-// 曲リストの取得
+// 曲リストを取得
 app.get("/songs", (req, res) => {
     res.json(songs);
 });
 
 // 曲を追加
 app.post("/songs", (req, res) => {
-    const song = { id: id++, name: req.body.name };
-    songs.push(song);
-    res.status(201).json(song);
+    const { name } = req.body;
+    if (name) {
+        const song = { id: id++, name };
+        songs.push(song);
+        res.status(201).json(song);
+    } else {
+        res.status(400).json({ error: "Invalid input" });
+    }
 });
 
-// サーバーの起動
-app.listen(3000, () => {
-    console.log("Server running on http://localhost:3000");
-});
+// サーバーをポート8080で起動
+app.listen(8080, () => console.log("Server is running on http://localhost:8080"));
