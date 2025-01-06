@@ -11,21 +11,3 @@
 .mes {
     margin-left: 30px;
 }
-
-.button {
-    margin-left: 10px;
-    cursor: pointer;
-    padding: 5px;
-    border: none;
-    background-color: #4CAF50;
-    color: white;
-}
-
-.button:hover {
-    background-color: #45a049;
-}
-
-.likes {
-    margin-left: 20px;
-    font-weight: bold;
-}

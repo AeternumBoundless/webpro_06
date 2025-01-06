@@ -1,4 +1,5 @@
 "use strict";
+
 const express = require("express");
 const app = express();
 
@@ -12,43 +13,27 @@ app.use(express.urlencoded({ extended: true }));
 app.post("/post", (req, res) => {
   const name = req.body.name;
   const message = req.body.message;
-  bbs.push({ name: name, message: message, likes: 0 });  // いいね数を追加
+  bbs.push({ name: name, message: message });
   res.json({ number: bbs.length });
 });
 
-// 投稿の削除
-app.post("/delete", (req, res) => {
-  const index = Number(req.body.index);
-  if (index >= 0 && index < bbs.length) {
-    bbs.splice(index, 1);
-    res.json({ number: bbs.length });
+// 投稿チェック
+app.post("/check", (req, res) => {
+  res.json({ number: bbs.length });
+});
+
+// 投稿読み込み
+app.post("/read", (req, res) => {
+  const start = Number(req.body.start);
+  if (start === 0) {
+    res.json({ messages: bbs });
   } else {
-    res.status(400).json({ error: "無効な投稿インデックス" });
+    res.json({ messages: bbs.slice(start) });
   }
 });
 
-// 投稿の編集
-app.post("/edit", (req, res) => {
-  const index = Number(req.body.index);
-  const newMessage = req.body.message;
-  if (index >= 0 && index < bbs.length) {
-    bbs[index].message = newMessage;
-    res.json({ number: bbs.length });
-  } else {
-    res.status(400).json({ error: "無効な投稿インデックス" });
-  }
+// サーバーを起動
+app.listen(8080, () => {
+  console.log("Server is running on port 8080!");
 });
-
-// いいね機能
-app.post("/like", (req, res) => {
-  const index = Number(req.body.index);
-  if (index >= 0 && index < bbs.length) {
-    bbs[index].likes += 1;
-    res.json({ number: bbs[index].likes });
-  } else {
-    res.status(400).json({ error: "無効な投稿インデックス" });
-  }
-});
-
-// その他のルート
-app.listen(8080, () => console.log("Example app listening on port 8080!"));
+っv
