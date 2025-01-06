@@ -1,57 +1,57 @@
 "use strict";
 
 document.addEventListener("DOMContentLoaded", () => {
-    const todoInput = document.getElementById("todo-input");
-    const addTodoButton = document.getElementById("add-todo");
-    const todoList = document.getElementById("todo-list");
+    const apiUrl = "http://localhost:3000"; // サーバのURL
+    const taskList = document.getElementById("task-list");
+    const newTaskInput = document.getElementById("new-task");
 
-    const fetchTodos = async () => {
-        const response = await fetch("/todos");
-        const todos = await response.json();
-        renderTodos(todos);
-    };
+    async function fetchTasks() {
+        const response = await fetch(`${apiUrl}/tasks`);
+        const tasks = await response.json();
+        renderTasks(tasks);
+    }
 
-    const renderTodos = (todos) => {
-        todoList.innerHTML = "";
-        todos.forEach(todo => {
+    function renderTasks(tasks) {
+        taskList.innerHTML = "";
+        tasks.forEach(task => {
             const li = document.createElement("li");
-            li.className = "todo-item";
+            li.className = "task";
             li.innerHTML = `
-                <span>${todo.title}</span>
-                <button data-id="${todo.id}" class="delete-button">削除</button>
+                <span>${task.name}</span>
+                <button data-id="${task.id}" class="delete-task">削除</button>
             `;
-            todoList.appendChild(li);
+            taskList.appendChild(li);
         });
-    };
+    }
 
-    const addTodo = async (title) => {
-        await fetch("/todos", {
+    async function addTask(name) {
+        await fetch(`${apiUrl}/tasks`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ title })
+            body: JSON.stringify({ name })
         });
-        fetchTodos();
-    };
+        fetchTasks();
+    }
 
-    const deleteTodo = async (id) => {
-        await fetch(`/todos/${id}`, { method: "DELETE" });
-        fetchTodos();
-    };
+    async function deleteTask(id) {
+        await fetch(`${apiUrl}/tasks/${id}`, { method: "DELETE" });
+        fetchTasks();
+    }
 
-    addTodoButton.addEventListener("click", () => {
-        const title = todoInput.value.trim();
-        if (title) {
-            addTodo(title);
-            todoInput.value = "";
+    document.getElementById("add-task").addEventListener("click", () => {
+        const taskName = newTaskInput.value.trim();
+        if (taskName) {
+            addTask(taskName);
+            newTaskInput.value = "";
         }
     });
 
-    todoList.addEventListener("click", (e) => {
-        if (e.target.classList.contains("delete-button")) {
-            const id = e.target.dataset.id;
-            deleteTodo(id);
+    taskList.addEventListener("click", (e) => {
+        if (e.target.classList.contains("delete-task")) {
+            const taskId = e.target.getAttribute("data-id");
+            deleteTask(taskId);
         }
     });
 
-    fetchTodos();
+    fetchTasks();
 });

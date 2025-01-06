@@ -2,35 +2,26 @@
 
 const express = require("express");
 const app = express();
-const bodyParser = require("body-parser");
+app.use(express.json());
 
-let todos = []; // To-Doデータを管理
+let tasks = [];
+let id = 1;
 
-app.use(express.static("public"));
-app.use(bodyParser.json());
-
-// To-Doリスト取得
-app.get("/todos", (req, res) => {
-    res.json(todos);
+app.get("/tasks", (req, res) => {
+    res.json(tasks);
 });
 
-// To-Do追加
-app.post("/todos", (req, res) => {
-    const { title } = req.body;
-    if (title) {
-        const newTodo = { id: Date.now(), title, completed: false };
-        todos.push(newTodo);
-        res.status(201).json(newTodo);
-    } else {
-        res.status(400).send("Title is required");
-    }
+app.post("/tasks", (req, res) => {
+    const task = { id: id++, name: req.body.name };
+    tasks.push(task);
+    res.status(201).json(task);
 });
 
-// To-Do削除
-app.delete("/todos/:id", (req, res) => {
-    const id = Number(req.params.id);
-    todos = todos.filter(todo => todo.id !== id);
-    res.status(204).end();
+app.delete("/tasks/:id", (req, res) => {
+    tasks = tasks.filter(task => task.id !== parseInt(req.params.id, 10));
+    res.status(204).send();
 });
 
-app.listen(3000, () => console.log("Server is running on http://localhost:3000"));
+app.listen(3000, () => {
+    console.log("Server running on http://localhost:3000");
+});
