@@ -1,0 +1,33 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+
+h1 {
+    color: #333;
+}
+
+#todo-input {
+    width: 300px;
+    padding: 8px;
+}
+
+#add-todo {
+    padding: 8px 16px;
+    cursor: pointer;
+}
+
+#todo-list {
+    list-style: none;
+    padding: 0;
+}
+
+.todo-item {
+    display: flex;
+    justify-content: space-between;
+    margin: 10px 0;
+}
+
+.todo-item button {
+    margin-left: 10px;
+}
