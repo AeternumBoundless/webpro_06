@@ -1,55 +1,20 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const apiUrl = "http://localhost:3000";
-    const songList = document.getElementById("song-list");
-    const songNameInput = document.getElementById("song-name");
+const express = require("express");
+const app = express();
+app.use(express.json());
 
-    async function fetchSongs() {
-        const response = await fetch(`${apiUrl}/songs`);
-        const songs = await response.json();
-        renderSongs(songs);
-    }
+let songs = [];
+let id = 1;
 
-    function renderSongs(songs) {
-        songList.innerHTML = "";
-        songs.forEach(song => {
-            const li = document.createElement("li");
-            li.className = "song";
-            li.innerHTML = `
-                <span>${song.name}</span>
-                <button data-id="${song.id}" class="complete-song">${song.completed ? "完了" : "聴いた"}</button>
-            `;
-            songList.appendChild(li);
-        });
-    }
+app.get("/songs", (req, res) => {
+    res.json(songs);
+});
 
-    async function addSong(name) {
-        await fetch(`${apiUrl}/songs`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name, completed: false })
-        });
-        fetchSongs();
-    }
+app.post("/songs", (req, res) => {
+    const song = { id: id++, name: req.body.name };
+    songs.push(song);
+    res.status(201).json(song);
+});
 
-    async function toggleCompletion(id) {
-        await fetch(`${apiUrl}/songs/${id}/toggle`, { method: "PUT" });
-        fetchSongs();
-    }
-
-    document.getElementById("add-song").addEventListener("click", () => {
-        const songName = songNameInput.value.trim();
-        if (songName) {
-            addSong(songName);
-            songNameInput.value = "";
-        }
-    });
-
-    songList.addEventListener("click", (e) => {
-        const id = e.target.getAttribute("data-id");
-        if (e.target.classList.contains("complete-song")) {
-            toggleCompletion(id);
-        }
-    });
-
-    fetchSongs();
+app.listen(3000, () => {
+    console.log("Server running on http://localhost:3000");
 });

@@ -2,18 +2,55 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>次に再生する曲</title>
+    <title>聞きたい曲リスト管理</title>
     <link rel="stylesheet" href="report.css">
 </head>
 <body>
-    <h1>次に再生する曲</h1>
+    <h1>聞きたい曲リスト</h1>
     <div id="app">
-        <input type="text" id="song-name" placeholder="次に聴きたい曲名を入力">
+        <input type="text" id="song-name" placeholder="曲名を入力">
         <button id="add-song">追加</button>
         <ul id="song-list"></ul>
     </div>
+    <script>
+        const apiUrl = "http://localhost:3000";
+        const songList = document.getElementById("song-list");
+        const songNameInput = document.getElementById("song-name");
 
-    <script src="app.js"></script>
+        async function fetchSongs() {
+            const response = await fetch(`${apiUrl}/songs`);
+            const songs = await response.json();
+            renderSongs(songs);
+        }
+
+        function renderSongs(songs) {
+            songList.innerHTML = "";
+            songs.forEach(song => {
+                const li = document.createElement("li");
+                li.className = "song";
+                li.innerText = song.name;
+                songList.appendChild(li);
+            });
+        }
+
+        async function addSong(name) {
+            await fetch(`${apiUrl}/songs`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name })
+            });
+            fetchSongs();
+        }
+
+        document.getElementById("add-song").addEventListener("click", () => {
+            const songName = songNameInput.value.trim();
+            if (songName) {
+                addSong(songName);
+                songNameInput.value = "";
+            }
+        });
+
+        fetchSongs();
+    </script>
 </body>
 </html>
