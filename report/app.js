@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const apiUrl = "http://localhost:3000";
     const songList = document.getElementById("song-list");
 
-    // 曲リストを取得して表示
+    // 曲リストを表示
     async function fetchSongs() {
         const songs = await (await fetch(`${apiUrl}/songs`)).json();
         songList.innerHTML = songs.map(song => `
@@ -18,12 +18,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // 曲追加
     async function addSong(name, artist) {
-        await fetch(`${apiUrl}/songs`, {
+        const response = await fetch(`${apiUrl}/songs`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ name, artist, completed: false })
         });
-        fetchSongs();
+        const newSong = await response.json();
+        
+        // 新しい曲を即座にリストに追加
+        const li = document.createElement("li");
+        li.className = "song";
+        li.innerHTML = `
+            <span>${newSong.name} by ${newSong.artist} - 未完了</span>
+            <button data-id="${newSong.id}" class="complete-song">完了</button>
+            <button data-id="${newSong.id}" class="delete-song">削除</button>
+        `;
+        songList.appendChild(li);
     }
 
     // 完了状態の切り替え
