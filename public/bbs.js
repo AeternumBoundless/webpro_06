@@ -1,29 +1,29 @@
 "use strict";
 
-let number = 0; // 投稿数を追跡する変数
+let number = 0; 
 
 const bbs = document.querySelector('#bbs');
 
-// 数字を赤色にするためのスタイル
+
 function styleNumbers(message) {
-    // 数字を検出して<span>タグでラップする
+    
     return message.replace(/\d+/g, (match) => {
-        return `<span class="number">${match}</span>`;  // 数字部分にクラス「number」を追加
+        return `<span class="number">${match}</span>`;  
     });
 }
 
-// 投稿ボタンを押した時の処理
+
 document.querySelector('#post').addEventListener('click', () => {
     const name = document.querySelector('#name').value;
     const message = document.querySelector('#message').value;
 
-    // 名前かメッセージが空の場合はエラーを表示
+    
     if (!name || !message) {
-        alert("名前とメッセージは必須です！");
-        return;  // フォーム送信を中止
+        alert("必ず名前とメッセージの入力が必要です。");
+        return;  
     }
 
-    const params = {  // URL Encode
+    const params = {  
         method: "POST",
         body:  'name='+name+'&message='+message,
         headers: {
@@ -45,9 +45,9 @@ document.querySelector('#post').addEventListener('click', () => {
     });
 });
 
-// 投稿チェックボタンを押した時の処理
+
 document.querySelector('#check').addEventListener('click', () => {
-    const params = {  // URL Encode
+    const params = {  
         method: "POST",
         body:  '',
         headers: {
@@ -86,18 +86,18 @@ document.querySelector('#check').addEventListener('click', () => {
             .then((response) => {
                 number += response.messages.length;
                 for (let mes of response.messages) {
-                    console.log(mes);  // 表示する投稿
+                    console.log(mes);  
                     let cover = document.createElement('div');
                     cover.className = 'cover';
 
-                    // 現在の時間を取得し、フォーマットする
+                    
                     const now = new Date();
                     const hours = String(now.getHours()).padStart(2, '0');
                     const minutes = String(now.getMinutes()).padStart(2, '0');
                     const seconds = String(now.getSeconds()).padStart(2, '0');
                     const time = `${hours}:${minutes}:${seconds}`;
 
-                    // 名前の前に時間を追加
+                    
                     let time_area = document.createElement('span');
                     time_area.className = 'time';
                     time_area.innerText = time;
@@ -108,7 +108,7 @@ document.querySelector('#check').addEventListener('click', () => {
 
                     let mes_area = document.createElement('span');
                     mes_area.className = 'mes';
-                    mes_area.innerHTML = styleNumbers(mes.message);  // メッセージ内の数字に色を付ける
+                    mes_area.innerHTML = styleNumbers(mes.message);  
 
                     cover.appendChild(time_area);
                     cover.appendChild(name_area);
